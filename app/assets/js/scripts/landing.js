@@ -3,6 +3,7 @@
  */
 // Requirements
 const { URL } = require('url')
+const path = require('path')
 const { MojangRestAPI, getServerStatus } = require('helios-core/mojang')
 const { RestResponseStatus, isDisplayableError, validateLocalFile } = require('helios-core/common')
 const { FullRepair, DistributionIndexProcessor, MojangIndexProcessor, downloadFile } = require('helios-core/dl')
@@ -505,6 +506,30 @@ const GAME_LAUNCH_REGEX =
     /^\[.+\]: (?:MinecraftForge .+ Initialized|ModLauncher .+ starting: .+|Loading Minecraft .+ with Fabric Loader .+)$/
 const MIN_LINGER = 5000
 
+// Files that should only be downloaded once (never overridden after user plays)
+const USER_CONFIGURABLE_FILES = ['options.txt', 'optionsshaders.txt', 'settings.txt']
+
+/**
+ * Check if user configurable files already exist and should be preserved
+ * @param {string} gameDir - The game directory path
+ * @returns {Set} Set of files that exist and should be skipped
+ */
+function getExistingUserFiles(gameDir) {
+    const fs = require('fs-extra')
+    const path = require('path')
+    const existingFiles = new Set()
+
+    USER_CONFIGURABLE_FILES.forEach(fileName => {
+        const filePath = path.join(gameDir, fileName)
+        if (fs.existsSync(filePath)) {
+            existingFiles.add(fileName)
+            console.log(`Preserving user-configured file: ${fileName}`)
+        }
+    })
+
+    return existingFiles
+}
+
 async function dlAsync(login = true) {
     // Login parameter is temporary for debug purposes. Allows testing the validation/downloads without
     // launching the game.
@@ -540,6 +565,25 @@ async function dlAsync(login = true) {
     toggleLaunchArea(true)
     setLaunchPercentage(0, 100)
 
+    // Check which user files already exist and should be preserved
+    const gameDir = path.join(ConfigManager.getInstanceDirectory(), serv.rawServer.id)
+    const existingUserFiles = getExistingUserFiles(gameDir)
+
+    // Filter out existing user files from the server modules to prevent overriding
+    if (existingUserFiles.size > 0) {
+        const originalModules = serv.modules
+        serv.modules = originalModules.filter(module => {
+            if (module.rawModule.type === 'File' && module.rawModule.artifact?.path) {
+                const fileName = path.basename(module.rawModule.artifact.path)
+                if (existingUserFiles.has(fileName)) {
+                    console.log(`Skipping download of existing user file: ${fileName}`)
+                    return false
+                }
+            }
+            return true
+        })
+    }
+
     const fullRepairModule = new FullRepair(
         ConfigManager.getCommonDirectory(),
         ConfigManager.getInstanceDirectory(),
@@ -550,39 +594,14 @@ async function dlAsync(login = true) {
 
     fullRepairModule.spawnReceiver()
 
-    fullRepairModule.childProcess.on('error', err => {
-        loggerLaunchSuite.error('Error during launch', err)
-        showLaunchFailure(
-            Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'),
-            err.message || Lang.queryJS('landing.dlAsync.errorDuringLaunchText')
-        )
-    })
-    fullRepairModule.childProcess.on('close', (code, _signal) => {
-        if (code !== 0) {
-            loggerLaunchSuite.error(`Full Repair Module exited with code ${code}, assuming error.`)
-            showLaunchFailure(
-                Lang.queryJS('landing.dlAsync.errorDuringLaunchTitle'),
-                Lang.queryJS('landing.dlAsync.seeConsoleForDetails')
-            )
+    fullRepairModule.addEventHandler('validate', async (percent, handler) => {
+        setLaunchPercentage(percent)
+        if (percent >= 100) {
+            handler.destroyReceiver()
         }
     })
 
-    loggerLaunchSuite.info('Validating files.')
-    setLaunchDetails(Lang.queryJS('landing.dlAsync.validatingFileIntegrity'))
-    let invalidFileCount = 0
-    try {
-        invalidFileCount = await fullRepairModule.verifyFiles(percent => {
-            setLaunchPercentage(percent)
-        })
-        setLaunchPercentage(100)
-    } catch (err) {
-        loggerLaunchSuite.error('Error during file validation.')
-        showLaunchFailure(
-            Lang.queryJS('landing.dlAsync.errorDuringFileVerificationTitle'),
-            err.displayable || Lang.queryJS('landing.dlAsync.seeConsoleForDetails')
-        )
-        return
-    }
+    const invalidFileCount = await fullRepairModule.validate()
 
     if (invalidFileCount > 0) {
         loggerLaunchSuite.info('Downloading files.')
