@@ -12,6 +12,7 @@ const AuthManager = require('./assets/js/authmanager')
 /** @type import("../configmanager") */
 const ConfigManager = require('./assets/js/configmanager')
 const { DistroAPI } = require('./assets/js/distromanager')
+const { validateSelectedJvm, ensureJavaDirIsRoot } = require('helios-core/java')
 
 /**
  *

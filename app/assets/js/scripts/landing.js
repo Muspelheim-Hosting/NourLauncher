@@ -3,18 +3,10 @@
  */
 // Requirements
 const { URL } = require('url')
-const path = require('path')
 const { MojangRestAPI, getServerStatus } = require('helios-core/mojang')
 const { RestResponseStatus, isDisplayableError, validateLocalFile } = require('helios-core/common')
 const { FullRepair, DistributionIndexProcessor, MojangIndexProcessor, downloadFile } = require('helios-core/dl')
-const {
-    validateSelectedJvm,
-    ensureJavaDirIsRoot,
-    javaExecFromRoot,
-    discoverBestJvmInstallation,
-    latestOpenJDK,
-    extractJdk,
-} = require('helios-core/java')
+const { javaExecFromRoot, discoverBestJvmInstallation, latestOpenJDK, extractJdk } = require('helios-core/java')
 
 // Internal Requirements
 const DiscordWrapper = require('./assets/js/discordwrapper')
@@ -516,7 +508,6 @@ const USER_CONFIGURABLE_FILES = ['options.txt', 'optionsshaders.txt', 'settings.
  */
 function getExistingUserFiles(gameDir) {
     const fs = require('fs-extra')
-    const path = require('path')
     const existingFiles = new Set()
 
     USER_CONFIGURABLE_FILES.forEach(fileName => {
@@ -594,34 +585,23 @@ async function dlAsync(login = true) {
 
     fullRepairModule.spawnReceiver()
 
-    fullRepairModule.addEventHandler('validate', async (percent, handler) => {
-        setLaunchPercentage(percent)
-        if (percent >= 100) {
-            handler.destroyReceiver()
-        }
-    })
+    // FullRepair automatically validates and downloads files as needed
+    loggerLaunchSuite.info('Validating and downloading files if needed.')
+    setLaunchDetails(Lang.queryJS('landing.dlAsync.validatingFileIntegrity'))
+    setLaunchPercentage(0)
 
-    const invalidFileCount = await fullRepairModule.validate()
-
-    if (invalidFileCount > 0) {
-        loggerLaunchSuite.info('Downloading files.')
-        setLaunchDetails(Lang.queryJS('landing.dlAsync.downloadingFiles'))
-        setLaunchPercentage(0)
-        try {
-            await fullRepairModule.download(percent => {
-                setDownloadPercentage(percent)
-            })
-            setDownloadPercentage(100)
-        } catch (err) {
-            loggerLaunchSuite.error('Error during file download.')
-            showLaunchFailure(
-                Lang.queryJS('landing.dlAsync.errorDuringFileDownloadTitle'),
-                err.displayable || Lang.queryJS('landing.dlAsync.seeConsoleForDetails')
-            )
-            return
-        }
-    } else {
-        loggerLaunchSuite.info('No invalid files, skipping download.')
+    try {
+        await fullRepairModule.download(percent => {
+            setDownloadPercentage(percent)
+        })
+        setDownloadPercentage(100)
+    } catch (err) {
+        loggerLaunchSuite.error('Error during file validation/download.')
+        showLaunchFailure(
+            Lang.queryJS('landing.dlAsync.errorDuringFileDownloadTitle'),
+            err.displayable || Lang.queryJS('landing.dlAsync.seeConsoleForDetails')
+        )
+        return
     }
 
     // trigger extranious mod removal
