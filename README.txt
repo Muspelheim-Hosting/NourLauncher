@@ -1,10 +1,10 @@
 ======================================
-VOID EVENT LAUNCHER - README
+NOUR LAUNCHER - README
 ======================================
 
-Thank you for installing Void Event Launcher!
+Thank you for installing Nour Launcher!
 
-This launcher allows you to easily join modded Minecraft servers for Void Event Hub events. All mods, configurations, and updates are handled automatically.
+This launcher allows you to easily join modded Minecraft servers for Nour's community. All mods, configurations, and updates are handled automatically.
 
 GETTING STARTED
 --------------------------------------
@@ -26,5 +26,5 @@ If you encounter any issues:
 For additional help, visit https://voideventhub.com/support
 
 --------------------------------------
-© 2025 Void Event Hub
+© 2025 Nour
 Version: 1.0.0 

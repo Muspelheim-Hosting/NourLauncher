@@ -1,6 +1,6 @@
-<p align="center"><img src="./app/assets/images/VoidLogo.png" width="250px" height="250px" alt="Void Event Launcher Logo"></p>
+<p align="center"><img src="./app/assets/images/cuties.png" width="250px" height="250px" alt="Nour Launcher Logo"></p>
 
-<h1 align="center">Void Event Launcher</h1>
+<h1 align="center">Nour Launcher</h1>
 
 <p align="center">
   <img src="https://img.shields.io/github/issues-pr/Void-Event-Hub/VoidEventLauncher?label=pull%20requests&color=yellow" alt="pull requests"/>
@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/github/license/Void-Event-Hub/VoidEventLauncher?color=brightgreen" alt="license"/>
 </p>
 
-<p align="center"><i>Join the Void Event Hub without worrying about installing Java, Forge, or other mods. We'll handle that for you.</i></p>
+<p align="center"><i>Join Nour's server without worrying about installing Java, Forge, or other mods. We'll handle that for you.</i></p>
 
 ---
 
@@ -75,7 +75,7 @@ Build for a specific platform:
 
 ## Description
 
-The Void Event Hub is a collection of popular Minecraft Modpack Events. Team up with your friends, communicate seamlessly via the integrated voice chat, and engage in trade with other teams...
+Nour Launcher is a custom launcher for modded Minecraft designed for Nour's community. Team up with your friends, communicate seamlessly via the integrated voice chat, and have fun playing together...
 
 Download and install the launcher to gauge all it can do!
 
@@ -86,7 +86,7 @@ Download and install the launcher to gauge all it can do!
 [mainprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Main Process'
 [rendererprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Renderer Process'
 [chromedebugger]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome 'Debugger for Chrome'
-[discord]: https://discord.gg/P6PABSb9uc 'Void Event Hub - Discord'
+[discord]: https://discord.gg/P6PABSb9uc 'Nour Launcher - Discord'
 [issues]: https://github.com/Void-Event-Hub/VoidEventLauncher/issues 'issues'
 
 ### Special Thanks

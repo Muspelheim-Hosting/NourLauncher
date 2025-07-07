@@ -4,11 +4,11 @@
 // const { execSync } = require('child_process')
 
 const config = {
-    appId: 'net.voideventhub.launcher',
-    productName: 'Void Event Launcher',
+    appId: 'net.nourlauncher.launcher',
+    productName: 'Nour Launcher',
     artifactName: '${productName}-setup-${channel}_${version}-${os}_${arch}.${ext}',
 
-    copyright: 'Copyright © 2025 Void Event Hub',
+    copyright: 'Copyright © 2025 Muspelheim',
 
     asar: true,
     compression: 'maximum',
@@ -31,11 +31,7 @@ const config = {
                 target: 'nsis',
                 arch: 'x64',
             },
-        ],
-        // Custom signing script is moved to signtoolOptions
-        signtoolOptions: {
-            sign: './sign.js',
-        },
+        ]
     },
 
     // Windows Installer Configuration - NSIS
@@ -50,9 +46,9 @@ const config = {
         perMachine: false, // Default to per-user, but show option for per-machine
         createDesktopShortcut: true, // Create desktop shortcut
         createStartMenuShortcut: true, // Create start menu shortcut
-        shortcutName: 'Void Event Launcher', // Shortcut name
+        shortcutName: 'Nour Launcher', // Shortcut name
         runAfterFinish: true, // Run app after installation
-        menuCategory: 'Void Event Hub', // Start menu category
+        menuCategory: 'Nour Launcher', // Start menu category
 
         // Branding elements
         installerIcon: 'build/icon.ico', // Installer icon
@@ -96,9 +92,9 @@ const config = {
                 arch: ['x64', 'arm64'],
             },
         ],
-        maintainer: 'Void-Event-Hub',
-        vendor: 'Void-Event-Hub',
-        synopsis: 'Modded Minecraft Launcher for use in Void Event Hub events.',
+        maintainer: 'Muspelheim',
+        vendor: 'Muspelheim',
+        synopsis: 'Modded Minecraft Launcher for use in Nours twitch server.',
         description:
             'Custom launcher which allows users to join modded servers. All mods, configurations, and updates are handled automatically.',
         category: 'Game',
@@ -112,8 +108,8 @@ const config = {
     // GitHub Release Configuration
     publish: {
         provider: 'github',
-        repo: 'VoidEventLauncher',
-        owner: 'Void-Event-Hub',
+        repo: 'NourLauncher',
+        owner: 'Muspelheim-Hosting',
         releaseType: 'draft',
     },
 }

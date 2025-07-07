@@ -1,9 +1,9 @@
 {
-  "name": "void-event-launcher",
+  "name": "nour-launcher",
   "version": "0.0.12",
-  "productName": "Void Event Launcher",
-  "description": "Modded Minecraft Launcher for the Void Event Hub",
-  "author": "Tyrthurey (https://github.com/Tyrthurey/)",
+  "productName": "Nour Launcher",
+  "description": "Modded Minecraft Launcher for Nour",
+  "author": "Muspelheim",
   "license": "UNLICENSED",
   "homepage": "https://github.com/Void-Event-Hub/VoidEventLauncher",
   "bugs": {
