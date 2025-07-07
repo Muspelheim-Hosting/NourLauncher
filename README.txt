@@ -23,8 +23,8 @@ If you encounter any issues:
 - Verify your Minecraft account credentials
 - Try restarting the launcher
 
-For additional help, visit https://voideventhub.com/support
+For additional help, visit https://github.com/Muspelheim-Hosting/NourLauncher/issues
 
 --------------------------------------
 © 2025 Nour
-Version: 1.0.0 
+Version: 0.0.16 

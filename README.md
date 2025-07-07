@@ -87,7 +87,7 @@ Download and install the launcher to gauge all it can do!
 [rendererprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Renderer Process'
 [chromedebugger]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome 'Debugger for Chrome'
 [discord]: https://discord.gg/P6PABSb9uc 'Nour Launcher - Discord'
-[issues]: https://github.com/Void-Event-Hub/VoidEventLauncher/issues 'issues'
+[issues]: https://github.com/Muspelheim-Hosting/NourLauncher/issues 'issues'
 
 ### Special Thanks
 

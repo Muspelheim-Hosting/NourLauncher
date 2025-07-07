@@ -5,9 +5,9 @@
   "description": "Modded Minecraft Launcher for Nour",
   "author": "Muspelheim",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/Void-Event-Hub/VoidEventLauncher",
+  "homepage": "https://github.com/Muspelheim-Hosting/NourLauncher",
   "bugs": {
-    "url": "https://github.com/Void-Event-Hub/VoidEventLauncher/issues"
+    "url": "https://github.com/Muspelheim-Hosting/NourLauncher/issues"
   },
   "private": true,
   "main": "index.js",
@@ -50,6 +50,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Void-Event-Hub/VoidEventLauncher.git"
+    "url": "git+https://github.com/Muspelheim-Hosting/NourLauncher.git"
   }
 }
