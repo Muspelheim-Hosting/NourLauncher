@@ -300,7 +300,7 @@
     border-radius: 2px;
     font-size: 0.8rem;
     color: #5bc0de;
-    border: 1px solid var(--color-primary);
+    border: 1px solid #2f6ba3;
 }
 
 /* The revision version of the server's manifest. */
@@ -313,7 +313,7 @@
     border-radius: 2px;
     font-size: 0.8rem;
     color: #5bc0de;
-    border: 1px solid var(--color-primary);
+    border: 1px solid #2f6ba3;
 }
 
 /* Star which indicates the default (main) server. */

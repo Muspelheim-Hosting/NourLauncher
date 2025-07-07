@@ -197,7 +197,7 @@
 
 /* User profile avatar container. */
 #avatarContainer {
-    border: 2px solid var(--color-primary);
+    border: 2px solid #2f6ba3;
     box-sizing: border-box;
     background: rgba(1, 2, 1, 0.5);
     height: 95px;
@@ -221,7 +221,7 @@
     transition: 0.25s ease;
     font-weight: bold;
     letter-spacing: 2px;
-    background-color: rgba(255, 194, 115, 0.35);
+    background-color: rgb(0, 183, 255, 0.15);
     -webkit-user-select: none;
     border: none;
     cursor: pointer;

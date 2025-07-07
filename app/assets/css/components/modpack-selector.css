@@ -27,7 +27,7 @@
     margin: 0 auto 20px;
     padding: 15px 15px 20px 15px;
     background-color: rgba(0, 0, 0, 0.5);
-    border: 3px solid var(--color-primary);
+    border: 3px solid #73bdf4;
     border-radius: 4px;
     overflow: visible;
     padding-top: 20px;
@@ -57,7 +57,7 @@
 }
 
 .modpack-grid::-webkit-scrollbar-thumb {
-    background: var(--color-primary);
+    background: #73bdf4;
     border-radius: 3px;
 }
 
@@ -67,7 +67,7 @@
     height: 100px;
     width: 100%;
     min-width: 200px;
-    border: 3px solid var(--color-primary);
+    border: 3px solid #73bdf4;
     border-radius: 0;
     transition: all 0.25s ease;
     opacity: 0.95;
@@ -82,8 +82,8 @@
 
 .serverListing[selected] {
     opacity: 1;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 15px var(--color-primary);
+    border-color: #73bdf4;
+    box-shadow: 0 0 15px #73bdf4;
     position: relative;
     z-index: 5;
 }
@@ -170,7 +170,7 @@
     font-size: 1.2rem;
     font-weight: lighter;
     margin-bottom: 4px;
-    color: #f0ad4e;
+    color: #73bdf4;
     letter-spacing: 1px;
     width: calc(100% - 25px); /* Make room for star icon */
     overflow: hidden;
@@ -204,7 +204,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #f0ad4e; /* Orange background */
+    background-color: #73bdf4; /* Blue background */
     color: white;
     font-size: 0.7rem;
     font-weight: bold;
@@ -227,7 +227,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #5cb85c; /* Green background */
+    background-color: #4a9ae8; /* Blue background */
     color: white;
     font-size: 0.7rem;
     font-weight: bold;
@@ -354,7 +354,7 @@
 
 /* Apply primary color only to the confirm button - matching the banner buttons */
 #serverSelectConfirm.button {
-    background-color: var(--color-primary);
+    background-color: #73bdf4;
     /* Remove any custom styling to ensure it matches the banner buttons exactly */
     border: var(--button-border) rgba(0, 0, 0, 0.6) solid;
 }
@@ -378,13 +378,13 @@
 
 #serverSelectListScrollable > .serverListing:not(:first-child):not(:last-child),
 #accountSelectListScrollable {
-    border-color: var(--color-primary);
+    border-color: #73bdf4;
 }
 
 /* Ensure all server listings use the same hover effect regardless of position */
 #serverSelectListScrollable > .serverListing:hover,
 #serverSelectListScrollable > .serverListing:focus {
     opacity: 1;
-    border-color: var(--color-primary-light);
-    box-shadow: 0 0 8px var(--color-primary-light);
+    border-color: #a8d0f7;
+    box-shadow: 0 0 8px #a8d0f7;
 }

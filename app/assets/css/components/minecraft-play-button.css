@@ -15,9 +15,9 @@
     max-width: 450px;
     height: 6rem;
     padding: 0 2.5em;
-    background: linear-gradient(135deg, #fade90, #eec12d, #d8b236, #d4af37);
+    background: linear-gradient(135deg, #a8d0f7, #73bdf4, #5ba7f0, #4a9ae8);
     background-size: 300% 300%;
-    border: 3px solid #af8824;
+    border: 3px solid #3a82c4;
     border-radius: 4px;
     display: flex;
     font-size: 2.2em;
@@ -32,7 +32,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5), 0 4px 0 #8b6914, 0 6px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5), 0 4px 0 #2f6ba3, 0 6px 10px rgba(0, 0, 0, 0.3);
     text-decoration: none;
     overflow: hidden;
     animation: gradientShift 8s ease infinite;
@@ -76,14 +76,14 @@
     background-size: 200% 200%;
     animation: pulse 2s infinite, gradientShift 3s ease infinite;
     transform: translateY(2px);
-    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.7), 0 2px 0 #8b6914, 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.7), 0 2px 0 #2f6ba3, 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .minecraft-play-button:active {
     transform: translateY(4px);
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2), 0 0 0 #8b6914;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2), 0 0 0 #2f6ba3;
     animation: none;
-    background: linear-gradient(135deg, #d4af37, #aa8c2c);
+    background: linear-gradient(135deg, #4a9ae8, #3a82c4);
     transition: all 0.4s ease;
 }
 
@@ -95,7 +95,7 @@
     left: -3px;
     right: -3px;
     bottom: -3px;
-    border: 3px solid #8b6914;
+    border: 3px solid #2f6ba3;
     border-radius: 4px;
     pointer-events: none;
     z-index: -1;
@@ -104,7 +104,7 @@
 }
 
 .minecraft-play-button:hover::before {
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    box-shadow: 0 0 15px rgba(115, 189, 244, 0.7);
 }
 
 /* Texture layer - make sure it's above the base but below the shine and text */
@@ -131,8 +131,8 @@
     background: linear-gradient(
         to right,
         rgba(255, 255, 255, 0) 0%,
-        rgba(255, 243, 131, 0.4) 50%,
-        rgba(250, 253, 63, 0) 100%
+        rgba(115, 189, 244, 0.4) 50%,
+        rgba(173, 216, 255, 0) 100%
     );
     transform: skewX(-25deg);
     z-index: 2;
@@ -243,4 +243,3 @@
         font-size: 18px;
     }
 }
-
