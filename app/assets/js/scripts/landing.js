@@ -499,7 +499,24 @@ const GAME_LAUNCH_REGEX =
 const MIN_LINGER = 5000
 
 // Files that should only be downloaded once (never overridden after user plays)
-const USER_CONFIGURABLE_FILES = ['options.txt', 'optionsshaders.txt', 'settings.txt']
+// Files and directories to preserve from being overridden by distribution
+const USER_CONFIGURABLE_FILES = [
+    'options.txt', // Minecraft settings
+    'optionsshaders.txt', // Shader settings
+    'settings.txt', // Mod settings
+    'servers.dat', // Server list
+    'usercache.json', // User cache
+    'usernamecache.json', // Username cache
+]
+
+const USER_CONFIGURABLE_DIRECTORIES = [
+    'shaderpacks', // User-installed shaderpacks
+    'saves', // User worlds/saves
+    'resourcepacks', // User resource packs
+    'screenshots', // User screenshots
+    'logs', // Game logs
+    'crash-reports', // Crash reports
+]
 
 /**
  * Check if user configurable files already exist and should be preserved
@@ -510,11 +527,21 @@ function getExistingUserFiles(gameDir) {
     const fs = require('fs-extra')
     const existingFiles = new Set()
 
+    // Check for existing user files
     USER_CONFIGURABLE_FILES.forEach(fileName => {
         const filePath = path.join(gameDir, fileName)
         if (fs.existsSync(filePath)) {
             existingFiles.add(fileName)
-            console.log(`Preserving user-configured file: ${fileName}`)
+            console.log(`🐟 Preserving user-configured file: ${fileName}`)
+        }
+    })
+
+    // Check for existing user directories
+    USER_CONFIGURABLE_DIRECTORIES.forEach(dirName => {
+        const dirPath = path.join(gameDir, dirName)
+        if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
+            existingFiles.add(dirName)
+            console.log(`🐟 Preserving user-configured directory: ${dirName}`)
         }
     })
 
@@ -560,15 +587,28 @@ async function dlAsync(login = true) {
     const gameDir = path.join(ConfigManager.getInstanceDirectory(), serv.rawServer.id)
     const existingUserFiles = getExistingUserFiles(gameDir)
 
-    // Filter out existing user files from the server modules to prevent overriding
+    // Filter out existing user files and directories from the server modules to prevent overriding
     if (existingUserFiles.size > 0) {
         const originalModules = serv.modules
         serv.modules = originalModules.filter(module => {
             if (module.rawModule.type === 'File' && module.rawModule.artifact?.path) {
-                const fileName = path.basename(module.rawModule.artifact.path)
+                const artifactPath = module.rawModule.artifact.path
+                const fileName = path.basename(artifactPath)
+                const dirPath = path.dirname(artifactPath)
+
+                // Check if the file itself should be preserved
                 if (existingUserFiles.has(fileName)) {
-                    console.log(`Skipping download of existing user file: ${fileName}`)
+                    console.log(`🐟 Skipping download of existing user file: ${fileName}`)
                     return false
+                }
+
+                // Check if the file is inside a directory that should be preserved
+                const pathParts = artifactPath.split(path.sep)
+                for (const dirName of USER_CONFIGURABLE_DIRECTORIES) {
+                    if (pathParts.includes(dirName) && existingUserFiles.has(dirName)) {
+                        console.log(`🐟 Skipping download into preserved directory: ${dirName}/${fileName}`)
+                        return false
+                    }
                 }
             }
             return true
