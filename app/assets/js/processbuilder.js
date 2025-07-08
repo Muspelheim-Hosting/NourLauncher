@@ -156,8 +156,8 @@ class ProcessBuilder {
             ? (typeof modCfg === 'boolean' && modCfg) ||
                   (typeof modCfg === 'object' && (typeof modCfg.value !== 'undefined' ? modCfg.value : true))
             : required != null
-            ? required.def
-            : true
+                ? required.def
+                : true
     }
 
     /**
@@ -264,6 +264,7 @@ class ProcessBuilder {
         } catch (err) {
             // We know old forge versions follow this format.
             // Error must be caused by newer version.
+            console.log(err)
         }
 
         // Equal or errored
@@ -344,11 +345,11 @@ class ProcessBuilder {
             return this.usingFabricLoader
                 ? ['--fabric.addMods', `@${this.forgeModListFile}`]
                 : [
-                      '--fml.mavenRoots',
-                      path.join('..', '..', 'common', 'modstore'),
-                      '--fml.modLists',
-                      this.forgeModListFile,
-                  ]
+                    '--fml.mavenRoots',
+                    path.join('..', '..', 'common', 'modstore'),
+                    '--fml.modLists',
+                    this.forgeModListFile,
+                ]
         } else {
             return []
         }
@@ -400,7 +401,7 @@ class ProcessBuilder {
 
         // Java Arguments
         if (process.platform === 'darwin') {
-            args.push('-Xdock:name=HeliosLauncher')
+            args.push('-Xdock:name=NourLauncher')
             args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
         }
         args.push('-Xmx' + ConfigManager.getMaxRAM(this.server.rawServer.id))
@@ -451,7 +452,7 @@ class ProcessBuilder {
 
         // Java Arguments
         if (process.platform === 'darwin') {
-            args.push('-Xdock:name=HeliosLauncher')
+            args.push('-Xdock:name=NourLauncher')
             args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
         }
         args.push('-Xmx' + ConfigManager.getMaxRAM(this.server.rawServer.id))
@@ -553,7 +554,7 @@ class ProcessBuilder {
                             val = args[i].replace(argDiscovery, tempNativePath)
                             break
                         case 'launcher_name':
-                            val = args[i].replace(argDiscovery, 'Helios-Launcher')
+                            val = args[i].replace(argDiscovery, 'Nour-Launcher')
                             break
                         case 'launcher_version':
                             val = args[i].replace(argDiscovery, this.launcherVersion)

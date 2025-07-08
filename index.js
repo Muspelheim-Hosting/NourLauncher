@@ -169,7 +169,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('VoidLogo'),
+        icon: getPlatformIcon('nour'),
     })
 
     msftAuthWindow.on('closed', () => {

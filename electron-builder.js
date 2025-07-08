@@ -4,7 +4,7 @@
 // const { execSync } = require('child_process')
 
 const config = {
-    appId: 'net.nourlauncher.launcher',
+    appId: 'net.nouroni.launcher',
     productName: 'Nour Launcher',
     artifactName: '${productName}-setup-${channel}_${version}-${os}_${arch}.${ext}',
 

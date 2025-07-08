@@ -1,12 +1,12 @@
-<p align="center"><img src="./app/assets/images/cuties.png" width="250px" height="250px" alt="Nour Launcher Logo"></p>
+<p align="center"><img src="./app/assets/images/cutie.png" width="250px" height="250px" alt="Nour Launcher Logo"></p>
 
 <h1 align="center">Nour Launcher</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/github/issues-pr/Void-Event-Hub/VoidEventLauncher?label=pull%20requests&color=yellow" alt="pull requests"/>
-  <img src="https://img.shields.io/github/issues/Void-Event-Hub/VoidEventLauncher?label=issues&color=yellow" alt="issues"/>
-  <img src="https://img.shields.io/github/contributors/Void-Event-Hub/VoidEventLauncher?color=green" alt="contributors"/>
-  <img src="https://img.shields.io/github/license/Void-Event-Hub/VoidEventLauncher?color=brightgreen" alt="license"/>
+  <img src="https://img.shields.io/github/issues-pr/Muspelheim-Hosting/NourLauncher?label=pull%20requests&color=yellow" alt="pull requests"/>
+  <img src="https://img.shields.io/github/issues/Muspelheim-Hosting/NourLauncher?label=issues&color=yellow" alt="issues"/>
+  <img src="https://img.shields.io/github/contributors/Muspelheim-Hosting/NourLauncher?color=green" alt="contributors"/>
+  <img src="https://img.shields.io/github/license/Muspelheim-Hosting/NourLauncher?color=brightgreen" alt="license"/>
 </p>
 
 <p align="center"><i>Join Nour's server without worrying about installing Java, Forge, or other mods. We'll handle that for you.</i></p>
@@ -23,16 +23,16 @@
 
 ## 📥 Downloads
 
-[**Download from GitHub Releases**](https://github.com/Void-Event-Hub/VoidEventLauncher/releases)
+[**Download from GitHub Releases**](https://github.com/Muspelheim-Hosting/NourLauncher/releases)
 
 | Platform      | File                                                      |
 | ------------- | --------------------------------------------------------- |
-| Windows x64   | `VoidEvent-Launcher-setup-VERSION-win_x64.exe`            |
-| macOS x64     | `VoidEvent-Launcher-setup-VERSION-mac_x64.dmg`            |
-| macOS arm64   | `VoidEvent-Launcher-setup-VERSION-mac_arm64.dmg`          |
-| Linux x86_64  | `VoidEvent-Launcher-setup-VERSION-linux_x86_64x.AppImage` |
-| Linux arm64   | `VoidEvent-Launcher-setup-VERSION-linux_arm64.AppImage`   |
-| Linux aarch64 | `VoidEvent-Launcher-setup-VERSION-linux_aarch64.rpm`      |
+| Windows x64   | `Nour-Launcher-setup-VERSION-win_x64.exe`            |
+| macOS x64     | `Nour-Launcher-setup-VERSION-mac_x64.dmg`            |
+| macOS arm64   | `Nour-Launcher-setup-VERSION-mac_arm64.dmg`          |
+| Linux x86_64  | `Nour-Launcher-setup-VERSION-linux_x86_64x.AppImage` |
+| Linux arm64   | `Nour-Launcher-setup-VERSION-linux_arm64.AppImage`   |
+| Linux aarch64 | `Nour-Launcher-setup-VERSION-linux_aarch64.rpm`      |
 
 ---
 
@@ -44,8 +44,8 @@
 
 ```bash
 # Clone and install dependencies
- git clone https://github.com/Void-Event-Hub/VoidEventLauncher.git
- cd VoidEventLauncher
+ git clone https://github.com/Muspelheim-Hosting/NourLauncher.git
+ cd NourLauncher
  npm install
 
 # Launch Application
@@ -86,7 +86,7 @@ Download and install the launcher to gauge all it can do!
 [mainprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Main Process'
 [rendererprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Renderer Process'
 [chromedebugger]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome 'Debugger for Chrome'
-[discord]: https://discord.gg/P6PABSb9uc 'Nour Launcher - Discord'
+[discord]: https://discord.gg/nouroni 'Nour Launcher - Discord'
 [issues]: https://github.com/Muspelheim-Hosting/NourLauncher/issues 'issues'
 
 ### Special Thanks
