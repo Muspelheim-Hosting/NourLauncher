@@ -30,8 +30,8 @@ finish-args:
     - --socket=pulseaudio
     - --env=ELECTRON_TRASH=gio
       # launcher and game files
-    - --filesystem=~/.voideventlauncher:create
-    - --filesystem=xdg-config/Void\ Event\ Launcher:create
+    - --filesystem=~/.nourlauncher:create
+    - --filesystem=xdg-config/Nour\ Launcher:create
       # for Discord RPC mods
     - --filesystem=xdg-run/app/com.discordapp.Discord:create
       # Mod drag&drop
@@ -158,12 +158,12 @@ modules:
       modules:
           - shared-modules/glu/glu-9.json
 
-    - name: void-event-launcher
+    - name: nour-launcher
       buildsystem: simple
       build-options:
           env:
-              XDG_CACHE_HOME: /run/build/void-event-launcher/flatpak-node/cache
-              npm_config_cache: /run/build/void-event-launcher/flatpak-node/npm-cache
+              XDG_CACHE_HOME: /run/build/nour-launcher/flatpak-node/cache
+              npm_config_cache: /run/build/nour-launcher/flatpak-node/npm-cache
               npm_config_offline: 'true'
       build-commands:
           # Install npm dependencies
@@ -190,4 +190,4 @@ modules:
           - type: script
             dest-filename: run.sh
             commands:
-                - zypak-wrapper.sh /app/main/void-event-launcher "$@"
+                - zypak-wrapper.sh /app/main/nour-launcher "$@"

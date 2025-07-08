@@ -94,7 +94,7 @@ const config = {
         ],
         maintainer: 'Muspelheim',
         vendor: 'Muspelheim',
-        synopsis: 'Modded Minecraft Launcher for use in Nours twitch server.',
+        synopsis: 'Modded Minecraft Launcher for use in Nours Realm.',
         description:
             'Custom launcher which allows users to join modded servers. All mods, configurations, and updates are handled automatically.',
         category: 'Game',

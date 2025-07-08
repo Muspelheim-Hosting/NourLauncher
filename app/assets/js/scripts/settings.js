@@ -158,8 +158,8 @@ function validateJVMOptionsInput(inputElement) {
                     </ul>
                 </div>
                 ${
-                    validation.warnings.length > 0
-                        ? `
+    validation.warnings.length > 0
+        ? `
                     <div class="settingsValidationWarning">
                         <strong>Warnings:</strong>
                         <ul>
@@ -167,8 +167,8 @@ function validateJVMOptionsInput(inputElement) {
                         </ul>
                     </div>
                 `
-                        : ''
-                }
+        : ''
+}
             `
         }
     }
@@ -1739,7 +1739,7 @@ function populateAboutVersionInformation() {
  */
 function populateReleaseNotes() {
     $.ajax({
-        url: 'https://github.com/Void-Event-Hub/VoidEventLauncher/releases.atom',
+        url: 'https://github.com/Muspelheim-Hosting/NourLauncher/releases.atom',
         success: data => {
             const version = 'v' + remote.app.getVersion()
             const entries = $(data).find('entry')

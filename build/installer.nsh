@@ -1,4 +1,4 @@
-; Custom NSIS Script for Void Event Launcher
+; Custom NSIS Script for Nour Launcher
 ; Uses the recommended macros approach for electron-builder
 
 ; Custom header - executed before any other code
