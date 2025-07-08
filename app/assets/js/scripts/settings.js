@@ -1541,9 +1541,9 @@ settingsMaxRAMRange.onchange = e => {
  */
 function updateUsedMemory(minRAM, maxRAM) {
     if (settingsMemoryUsed != null) {
-        const availableRAM = Number(os.freemem() / 1073741824)
+        const totalRAM = Number(os.totalmem() / 1073741824)
         // Calculate how much will be left after allocating maxRAM
-        const remainingRAM = Math.max(0, availableRAM - maxRAM).toFixed(1)
+        const remainingRAM = Math.max(0, totalRAM - maxRAM).toFixed(1)
         settingsMemoryUsed.innerHTML = remainingRAM + 'G'
     }
 }
@@ -1569,9 +1569,8 @@ function bindMinMaxRam(server) {
     const SETTINGS_MAX_MEMORY = ConfigManager.getAbsoluteMaxRAM(server.rawServer.javaOptions?.ram)
     const SETTINGS_MIN_MEMORY = ConfigManager.getAbsoluteMinRAM(server.rawServer.javaOptions?.ram)
 
-    // Get available RAM and use it as a cap if needed
-    const availableRAM = Number(os.freemem() / 1073741824)
-    const cappedMaxMemory = Math.min(SETTINGS_MAX_MEMORY, availableRAM)
+    // Use the configured maximum memory (which is already calculated from total RAM)
+    const cappedMaxMemory = SETTINGS_MAX_MEMORY
 
     // Set the max and min values for the ranged sliders.
     settingsMaxRAMRange.setAttribute('max', cappedMaxMemory)
