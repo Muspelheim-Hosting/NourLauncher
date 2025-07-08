@@ -88,31 +88,90 @@ bindFileSelectors()
  */
 function initSettingsValidators() {
     const sEls = document.getElementById('settingsContainer').querySelectorAll('[cValue]')
+
     Array.from(sEls).map((v, index, arr) => {
-        const vFn = ConfigManager['validate' + v.getAttribute('cValue')]
-        if (typeof vFn === 'function') {
+        const cVal = v.getAttribute('cValue')
+        const gFn = ConfigManager['validate' + cVal]
+        if (typeof gFn === 'function') {
             if (v.tagName === 'INPUT') {
-                if (v.type === 'number' || v.type === 'text') {
-                    v.addEventListener('keyup', e => {
-                        const v = e.target
-                        if (!vFn(v.value)) {
-                            settingsState.invalid.add(v.id)
-                            v.setAttribute('error', '')
-                            settingsSaveDisabled(true)
+                v.addEventListener('blur', e => {
+                    if (cVal === 'JVMOptions') {
+                        validateJVMOptionsInput(v)
+                    } else {
+                        const res = gFn.apply(null, [v.value])
+                        if (res !== true) {
+                            settingsValidationError(v, res)
                         } else {
-                            if (v.hasAttribute('error')) {
-                                v.removeAttribute('error')
-                                settingsState.invalid.delete(v.id)
-                                if (settingsState.invalid.size === 0) {
-                                    settingsSaveDisabled(false)
-                                }
-                            }
+                            settingsValidationSuccess(v)
                         }
-                    })
-                }
+                    }
+                })
             }
         }
     })
+}
+
+/**
+ * Validate JVM options input and show feedback
+ * @param {HTMLInputElement} inputElement The JVM options input element
+ */
+function validateJVMOptionsInput(inputElement) {
+    const value = inputElement.value.trim()
+    const validationContainer = document.getElementById('settingsJVMOptsValidation')
+
+    if (!value) {
+        // Empty is valid
+        settingsValidationSuccess(inputElement)
+        if (validationContainer) {
+            validationContainer.innerHTML = ''
+        }
+        return
+    }
+
+    const options = value.split(/\s+/)
+    const validation = ConfigManager.validateJVMOptions(options)
+
+    if (validation.isValid) {
+        settingsValidationSuccess(inputElement)
+        if (validationContainer) {
+            if (validation.warnings.length > 0) {
+                validationContainer.innerHTML = `
+                    <div class="settingsValidationWarning">
+                        <strong>Warnings:</strong>
+                        <ul>
+                            ${validation.warnings.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                    </div>
+                `
+            } else {
+                validationContainer.innerHTML = ''
+            }
+        }
+    } else {
+        settingsValidationError(inputElement, validation.errors.join(', '))
+        if (validationContainer) {
+            validationContainer.innerHTML = `
+                <div class="settingsValidationError">
+                    <strong>Errors:</strong>
+                    <ul>
+                        ${validation.errors.map(e => `<li>${e}</li>`).join('')}
+                    </ul>
+                </div>
+                ${
+                    validation.warnings.length > 0
+                        ? `
+                    <div class="settingsValidationWarning">
+                        <strong>Warnings:</strong>
+                        <ul>
+                            ${validation.warnings.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                    </div>
+                `
+                        : ''
+                }
+            `
+        }
+    }
 }
 
 /**
@@ -143,19 +202,56 @@ function populateJavaReqDesc(server) {
 }
 
 function populateJvmOptsLink(server) {
-    const major = server.effectiveJavaOptions.suggestedMajor
-    settingsJvmOptsLink.innerHTML = Lang.queryJS('settings.java.availableOptions', { major: major })
-    if (major >= 12) {
-        settingsJvmOptsLink.href = `https://docs.oracle.com/en/java/javase/${major}/docs/specs/man/java.html#extra-options-for-java`
-    } else if (major >= 11) {
-        settingsJvmOptsLink.href =
-            'https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE'
-    } else if (major >= 9) {
-        settingsJvmOptsLink.href = `https://docs.oracle.com/javase/${major}/tools/java.htm`
-    } else {
-        settingsJvmOptsLink.href = `https://docs.oracle.com/javase/${major}/docs/technotes/tools/${
-            process.platform === 'win32' ? 'windows' : 'unix'
-        }/java.html`
+    const jvmOptsLink = document.getElementById('settingsJvmOptsLink')
+    jvmOptsLink.innerHTML = Lang.queryJS('settings.jvmOptsLink')
+    jvmOptsLink.href = '#'
+    jvmOptsLink.onclick = e => {
+        e.preventDefault()
+        const javaVersion = server.effectiveJavaOptions.suggestedMajor || 17
+        let helpText = `<strong>Safe JVM Options for Java ${javaVersion}:</strong><br><br>`
+
+        if (javaVersion >= 17) {
+            helpText += `
+                <strong>Memory & Garbage Collection:</strong><br>
+                -XX:+UseG1GC (recommended garbage collector)<br>
+                -XX:G1NewSizePercent=20 (young generation size)<br>
+                -XX:G1ReservePercent=20 (reserved memory)<br>
+                -XX:MaxGCPauseMillis=50 (target pause time)<br><br>
+                
+                <strong>General Options:</strong><br>
+                -Dfile.encoding=UTF-8 (Unicode support)<br>
+                -Djava.awt.headless=true (headless mode)<br>
+                -Dlog4j2.formatMsgNoLookups=true (security)<br><br>
+                
+                <strong>Avoid These Options:</strong><br>
+                -XX:+UnlockExperimentalVMOptions (may not work on all JVMs)<br>
+                -Xmx, -Xms, -Xmn (memory is managed automatically)<br>
+                -XX:+UseConcMarkSweepGC (deprecated in Java 9+)<br>
+            `
+        } else {
+            helpText += `
+                <strong>Memory & Garbage Collection:</strong><br>
+                -XX:+UseG1GC (if available)<br>
+                -XX:+UseConcMarkSweepGC (alternative GC)<br>
+                -XX:+CMSIncrementalMode (incremental GC)<br><br>
+                
+                <strong>General Options:</strong><br>
+                -Dfile.encoding=UTF-8 (Unicode support)<br>
+                -Djava.awt.headless=true (headless mode)<br><br>
+                
+                <strong>Avoid These Options:</strong><br>
+                -Xmx, -Xms, -Xmn (memory is managed automatically)<br>
+                -XX:PermSize, -XX:MaxPermSize (not available in Java 8+)<br>
+            `
+        }
+
+        helpText += '<br><strong>Note:</strong> Test new options in a safe environment first!'
+
+        setOverlayContent('JVM Options Help', helpText, 'OK')
+        setOverlayHandler(() => {
+            toggleOverlay(false)
+        })
+        toggleOverlay(true)
     }
 }
 
@@ -1433,21 +1529,6 @@ settingsMinRAMRange.onchange = e => {
     const sMaxV = Number(settingsMaxRAMRange.getAttribute('value'))
     const sMinV = Number(settingsMinRAMRange.getAttribute('value'))
 
-    // Get available RAM
-    const availableRAM = Number(os.freemem() / 1073741824)
-
-    // Cap the value to available RAM
-    const cappedValue = Math.min(sMinV, availableRAM)
-
-    // If value was capped, update the slider
-    if (cappedValue !== sMinV) {
-        const sliderMeta = calculateRangeSliderMeta(settingsMinRAMRange)
-        const notch = ((cappedValue - sliderMeta.min) / sliderMeta.step) * sliderMeta.inc
-        updateRangedSlider(settingsMinRAMRange, cappedValue, notch)
-        // After capping, return since updateRangedSlider will trigger this function again
-        return
-    }
-
     // Get reference to range bar.
     const bar = e.target.getElementsByClassName('rangeSliderBar')[0]
     // Calculate effective total memory.
@@ -1485,21 +1566,6 @@ settingsMaxRAMRange.onchange = e => {
     // Current range values
     const sMaxV = Number(settingsMaxRAMRange.getAttribute('value'))
     const sMinV = Number(settingsMinRAMRange.getAttribute('value'))
-
-    // Get available RAM
-    const availableRAM = Number(os.freemem() / 1073741824)
-
-    // Cap the value to available RAM
-    const cappedValue = Math.min(sMaxV, availableRAM)
-
-    // If value was capped, update the slider
-    if (cappedValue !== sMaxV) {
-        const sliderMeta = calculateRangeSliderMeta(settingsMaxRAMRange)
-        const notch = ((cappedValue - sliderMeta.min) / sliderMeta.step) * sliderMeta.inc
-        updateRangedSlider(settingsMaxRAMRange, cappedValue, notch)
-        // After capping, return since updateRangedSlider will trigger this function again
-        return
-    }
 
     // Get reference to range bar.
     const bar = e.target.getElementsByClassName('rangeSliderBar')[0]
@@ -1541,9 +1607,9 @@ settingsMaxRAMRange.onchange = e => {
  */
 function updateUsedMemory(minRAM, maxRAM) {
     if (settingsMemoryUsed != null) {
-        const availableRAM = Number(os.freemem() / 1073741824)
+        const totalRAM = Number((os.totalmem() - 1073741824) / 1073741824)
         // Calculate how much will be left after allocating maxRAM
-        const remainingRAM = Math.max(0, availableRAM - maxRAM).toFixed(1)
+        const remainingRAM = Math.max(0, totalRAM - maxRAM).toFixed(1)
         settingsMemoryUsed.innerHTML = remainingRAM + 'G'
     }
 }
@@ -1569,14 +1635,10 @@ function bindMinMaxRam(server) {
     const SETTINGS_MAX_MEMORY = ConfigManager.getAbsoluteMaxRAM(server.rawServer.javaOptions?.ram)
     const SETTINGS_MIN_MEMORY = ConfigManager.getAbsoluteMinRAM(server.rawServer.javaOptions?.ram)
 
-    // Get available RAM and use it as a cap if needed
-    const availableRAM = Number(os.freemem() / 1073741824)
-    const cappedMaxMemory = Math.min(SETTINGS_MAX_MEMORY, availableRAM)
-
     // Set the max and min values for the ranged sliders.
-    settingsMaxRAMRange.setAttribute('max', cappedMaxMemory)
+    settingsMaxRAMRange.setAttribute('max', SETTINGS_MAX_MEMORY)
     settingsMaxRAMRange.setAttribute('min', SETTINGS_MIN_MEMORY)
-    settingsMinRAMRange.setAttribute('max', cappedMaxMemory)
+    settingsMinRAMRange.setAttribute('max', SETTINGS_MAX_MEMORY)
     settingsMinRAMRange.setAttribute('min', SETTINGS_MIN_MEMORY)
 }
 
@@ -1818,3 +1880,30 @@ async function prepareSettings(first = false) {
 
 // Prepare the settings UI on startup.
 //prepareSettings(true)
+
+/**
+ * Show validation error for a settings element
+ * @param {HTMLElement} element The input element
+ * @param {string} message The error message
+ */
+function settingsValidationError(element, message) {
+    settingsState.invalid.add(element.id)
+    element.setAttribute('error', '')
+    element.title = message
+    settingsSaveDisabled(true)
+}
+
+/**
+ * Show validation success for a settings element
+ * @param {HTMLElement} element The input element
+ */
+function settingsValidationSuccess(element) {
+    if (element.hasAttribute('error')) {
+        element.removeAttribute('error')
+        element.title = ''
+        settingsState.invalid.delete(element.id)
+        if (settingsState.invalid.size === 0) {
+            settingsSaveDisabled(false)
+        }
+    }
+}

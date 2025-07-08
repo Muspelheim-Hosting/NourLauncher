@@ -351,7 +351,8 @@ function applyThemeOverrides(themeOverrides) {
         themeOverridesSheet.insertRule(`body { background-image: url('${background}'); }`)
     }
 
-    // Dynamic banners disabled, using static banners from landingBanners.ejs instead
+    // Dynamic banners disabled - using static Twitch embed in landingBanners.ejs instead
+    // Banner data is stripped out in syncServerConfiguration() to reduce network overhead
 
     logger.info('Successfully applied theme overrides')
 }

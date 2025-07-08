@@ -551,9 +551,67 @@ exports.setModConfiguration = function (serverid, configuration) {
 
 // Java Settings
 
+function detectJVMImplementation(javaPath) {
+    if (!javaPath) return 'unknown'
+
+    try {
+        const { execSync } = require('child_process')
+        const versionOutput = execSync(`"${javaPath}" -version`, { encoding: 'utf8', timeout: 5000 })
+
+        if (versionOutput.includes('OpenJDK')) {
+            return 'openjdk'
+        } else if (versionOutput.includes('Oracle')) {
+            return 'oracle'
+        } else if (versionOutput.includes('Eclipse')) {
+            return 'eclipse'
+        } else if (versionOutput.includes('Amazon')) {
+            return 'amazon'
+        } else if (versionOutput.includes('Azul')) {
+            return 'azul'
+        }
+
+        return 'unknown'
+    } catch (error) {
+        console.warn('Could not detect JVM implementation:', error.message)
+        return 'unknown'
+    }
+}
+
+exports.detectJVMImplementation = detectJVMImplementation
+
+function getJVMSpecificOptions(javaVersion, jvmImplementation) {
+    const baseOptions = []
+
+    if (javaVersion >= 17) {
+        baseOptions.push('-XX:+UseG1GC')
+        baseOptions.push('-XX:G1NewSizePercent=20')
+        baseOptions.push('-XX:G1ReservePercent=20')
+        baseOptions.push('-XX:MaxGCPauseMillis=50')
+
+        // Only add region size for JVMs that support it reliably
+        if (jvmImplementation === 'openjdk' || jvmImplementation === 'oracle') {
+            baseOptions.push('-XX:G1HeapRegionSize=32M')
+        }
+    } else {
+        // For Java 8, use safer defaults
+        baseOptions.push('-XX:+UseG1GC')
+        // Don't use experimental options for older versions
+    }
+
+    return baseOptions
+}
+
 function defaultJavaConfig(effectiveJavaOptions, ram) {
-    if (effectiveJavaOptions.suggestedMajor > 8) {
-        return defaultJavaConfig17(ram)
+    const javaVersion = effectiveJavaOptions.suggestedMajor || 17
+    const jvmImplementation = 'unknown' // Will be detected later when executable is set
+
+    if (javaVersion > 8) {
+        return {
+            minRAM: resolveSelectedRAM(ram),
+            maxRAM: resolveSelectedRAM(ram),
+            executable: null,
+            jvmOptions: getJVMSpecificOptions(javaVersion, jvmImplementation),
+        }
     } else {
         return defaultJavaConfig8(ram)
     }
@@ -569,22 +627,6 @@ function defaultJavaConfig8(ram) {
             // '-XX:+CMSIncrementalMode',
             // '-XX:-UseAdaptiveSizePolicy',
             // '-Xmn128M'
-        ],
-    }
-}
-
-function defaultJavaConfig17(ram) {
-    return {
-        minRAM: resolveSelectedRAM(ram),
-        maxRAM: resolveSelectedRAM(ram),
-        executable: null,
-        jvmOptions: [
-            '-XX:+UnlockExperimentalVMOptions',
-            '-XX:+UseG1GC',
-            '-XX:G1NewSizePercent=20',
-            '-XX:G1ReservePercent=20',
-            '-XX:MaxGCPauseMillis=50',
-            '-XX:G1HeapRegionSize=32M',
         ],
     }
 }
@@ -684,6 +726,71 @@ exports.getJVMOptions = function (serverid) {
 }
 
 /**
+ * Validate JVM options for common issues and incompatibilities.
+ *
+ * @param {Array.<string>} jvmOptions Array of JVM option strings
+ * @returns {Object} Object with isValid boolean and errors array
+ */
+exports.validateJVMOptions = function (jvmOptions) {
+    const errors = []
+    const warnings = []
+
+    // Common problematic options
+    const problematicOptions = [
+        {
+            pattern: /^-XX:\+UnlockExperimentalVMOptions$/,
+            message: 'UnlockExperimentalVMOptions may not be supported on all JVMs',
+        },
+        { pattern: /^-XX:\+UseParNewGC$/, message: 'UseParNewGC is deprecated in Java 9+' },
+        { pattern: /^-XX:\+UseConcMarkSweepGC$/, message: 'UseConcMarkSweepGC is deprecated in Java 9+' },
+        { pattern: /^-XX:\+CMSIncrementalMode$/, message: 'CMSIncrementalMode is deprecated' },
+        { pattern: /^-XX:PermSize=/, message: 'PermSize is not available in Java 8+' },
+        { pattern: /^-XX:MaxPermSize=/, message: 'MaxPermSize is not available in Java 8+' },
+    ]
+
+    // Memory-related options that might conflict
+    const memoryOptions = jvmOptions.filter(
+        opt => opt.startsWith('-Xmx') || opt.startsWith('-Xms') || opt.startsWith('-Xmn')
+    )
+    if (memoryOptions.length > 0) {
+        warnings.push('Memory options (-Xmx, -Xms, -Xmn) are automatically managed by the launcher')
+    }
+
+    // Check each option
+    for (const option of jvmOptions) {
+        // Check for empty or invalid format
+        if (!option || option.trim() === '') {
+            errors.push('Empty JVM option detected')
+            continue
+        }
+
+        // Check for spaces in single option (should be split)
+        if (option.includes(' ')) {
+            errors.push(`Option "${option}" contains spaces - should be split into separate options`)
+            continue
+        }
+
+        // Check for problematic options
+        for (const problematic of problematicOptions) {
+            if (problematic.pattern.test(option)) {
+                warnings.push(`${option}: ${problematic.message}`)
+            }
+        }
+
+        // Basic format validation
+        if (!option.startsWith('-')) {
+            errors.push(`Invalid JVM option format: "${option}" (should start with -)`)
+        }
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors: errors,
+        warnings: warnings,
+    }
+}
+
+/**
  * Set the additional arguments for JVM initialization. Required arguments,
  * such as memory allocation, will be dynamically resolved and should not be
  * included in this value.
@@ -693,7 +800,12 @@ exports.getJVMOptions = function (serverid) {
  * initialization.
  */
 exports.setJVMOptions = function (serverid, jvmOptions) {
-    config.javaConfig[serverid].jvmOptions = jvmOptions
+    // Filter out memory options as they're managed automatically
+    const filteredOptions = jvmOptions.filter(
+        opt => !opt.startsWith('-Xmx') && !opt.startsWith('-Xms') && !opt.startsWith('-Xmn')
+    )
+
+    config.javaConfig[serverid].jvmOptions = filteredOptions
 }
 
 // Game Settings
@@ -850,6 +962,15 @@ exports.getServerConfiguration = function () {
  * @returns {ServerConfiguration} The new server configuration.
  */
 exports.setServerConfiguration = function (serverConfiguration) {
-    logger.verbose('Updated server configuration:', serverConfiguration)
+    // Create a copy for logging without banner data to reduce log verbosity
+    const logConfig = { ...serverConfiguration }
+    if (logConfig.themeOverrides && logConfig.themeOverrides.banners) {
+        logConfig.themeOverrides = { ...logConfig.themeOverrides }
+        delete logConfig.themeOverrides.banners
+        // Add a note that banners were stripped for logging
+        logConfig.themeOverrides._bannersStripped = true
+    }
+
+    logger.verbose('Updated server configuration:', logConfig)
     return (serverConfig = serverConfiguration)
 }

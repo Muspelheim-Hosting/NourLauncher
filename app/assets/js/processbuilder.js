@@ -108,10 +108,26 @@ class ProcessBuilder {
         child.stderr.on('data', data => {
             data.trim()
                 .split('\n')
-                .forEach(x => console.log(`\x1b[31m[Minecraft]\x1b[0m ${x}`))
+                .forEach(x => {
+                    console.log(`\x1b[31m[Minecraft]\x1b[0m ${x}`)
+                    // Check for JVM option related errors
+                    if (
+                        x.includes('Unrecognized VM option') ||
+                        x.includes('Invalid option') ||
+                        x.includes('VM option') ||
+                        x.includes('Could not create the Java Virtual Machine')
+                    ) {
+                        logger.error('JVM Option Error:', x)
+                        logger.error('JVM Options Used:', ConfigManager.getJVMOptions(this.server.rawServer.id))
+                    }
+                })
         })
         child.on('close', (code, signal) => {
             logger.info('Exited with code', code)
+            if (code !== 0 && code !== null) {
+                logger.error('Game process exited with non-zero code:', code)
+                logger.error('Last used JVM options:', ConfigManager.getJVMOptions(this.server.rawServer.id))
+            }
             fs.remove(tempNativePath, err => {
                 if (err) {
                     logger.warn('Error while deleting temp dir', err)

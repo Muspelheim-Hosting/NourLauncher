@@ -1,28 +1,28 @@
 <div id="landingBanners">
-    <!-- <div id="landingBannersContent" class="content">
-        <div class="landing-banner-container">
-            <div class="landing-banner-slides">
-                <div class="landing-banner-slide active" data-index="0">
-                    <div class="landing-banner-right">
-                        <img
-                            src="./assets/images/banners/banner.png"
-                            alt="Watch Nour Live!"
-                        />
-                    </div>
-                    <div>
-                        <h3>Watch Nour Live</h3>
-                        <p>
-                            Join my comfy off-stream community~!
-                        </p>
-                        <button href="https://www.twitch.tv/nourxoni" class="minecraft-banner-button">Watch Now</button>
-                    </div>
-                </div>
+    <div id="landingBannersContent" class="content">
+        <div class="twitch-embed-container">
+            <!-- Twitch webview for Electron -->
+            <webview
+                id="twitch-webview"
+                src="https://player.twitch.tv/?channel=nourxoni&parent=localhost&parent=127.0.0.1&parent=nourlauncher.net&muted=false&autoplay=false"
+                style="width: 100%; height: 100%;"
+                allowfullscreen
+            >
+            </webview>
 
-
-            <div class="landing-banner-navigation">
-                <button class="landing-banner-nav-btn prev">&lt;</button>
-                <button class="landing-banner-nav-btn next">&gt;</button>
+            <!-- Fallback content if webview fails -->
+            <div id="twitch-fallback" style="display: none; text-align: center; padding: 50px; color: white;">
+                <h3 style="margin-bottom: 20px; font-family: 'Minecraft', monospace;">Watch Nour Live on Twitch</h3>
+                <p style="margin-bottom: 30px;">Click the button below to watch the stream in your browser</p>
+                <button
+                    id="watch-live-btn"
+                    class="minecraft-banner-button"
+                    style="padding: 10px 20px; font-size: 16px;"
+                >
+                    Watch Live Stream
+                </button>
             </div>
         </div>
-    </div> -->
+    </div>
 </div>
+

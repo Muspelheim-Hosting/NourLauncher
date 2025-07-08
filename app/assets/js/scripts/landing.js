@@ -532,7 +532,7 @@ function getExistingUserFiles(gameDir) {
         const filePath = path.join(gameDir, fileName)
         if (fs.existsSync(filePath)) {
             existingFiles.add(fileName)
-            console.log(`🐟 Preserving user-configured file: ${fileName}`)
+            console.log(`Preserving user-configured file: ${fileName}`)
         }
     })
 
@@ -541,7 +541,7 @@ function getExistingUserFiles(gameDir) {
         const dirPath = path.join(gameDir, dirName)
         if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
             existingFiles.add(dirName)
-            console.log(`🐟 Preserving user-configured directory: ${dirName}`)
+            console.log(`Preserving user-configured directory: ${dirName}`)
         }
     })
 
@@ -598,7 +598,7 @@ async function dlAsync(login = true) {
 
                 // Check if the file itself should be preserved
                 if (existingUserFiles.has(fileName)) {
-                    console.log(`🐟 Skipping download of existing user file: ${fileName}`)
+                    console.log(`Skipping download of existing user file: ${fileName}`)
                     return false
                 }
 
@@ -606,7 +606,7 @@ async function dlAsync(login = true) {
                 const pathParts = artifactPath.split(path.sep)
                 for (const dirName of USER_CONFIGURABLE_DIRECTORIES) {
                     if (pathParts.includes(dirName) && existingUserFiles.has(dirName)) {
-                        console.log(`🐟 Skipping download into preserved directory: ${dirName}/${fileName}`)
+                        console.log(`Skipping download into preserved directory: ${dirName}/${fileName}`)
                         return false
                     }
                 }
