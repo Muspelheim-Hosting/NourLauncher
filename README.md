@@ -1,4 +1,4 @@
-<p align="center"><img src="./app/assets/images/cutie.png" width="250px" height="250px" alt="Nour Launcher Logo"></p>
+<p align="center"><img src="./app/assets/images/nour_cute_blinky.png" width="250px" height="250px" alt="Nour Launcher Logo"></p>
 
 <h1 align="center">Nour Launcher</h1>
 

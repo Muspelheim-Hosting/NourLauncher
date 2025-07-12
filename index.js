@@ -224,7 +224,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('VoidLogo'),
+        icon: getPlatformIcon('nour_cute_blinky'),
     })
 
     msftLogoutWindow.on('closed', () => {
