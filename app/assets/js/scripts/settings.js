@@ -1204,8 +1204,8 @@ function createRAMInputFields() {
         return // Fields already exist, no need to create them again
     }
 
-    // Get available memory
-    const availableRAM = Number(os.freemem() / 1073741824).toFixed(1)
+    // Get total memory
+    const totalRAM = Number(os.totalmem() / 1073741824).toFixed(1)
 
     // Replace settingsMaxRAMLabel with input field
     const maxRAMLabel = settingsMaxRAMLabel
@@ -1216,7 +1216,7 @@ function createRAMInputFields() {
     maxRAMInput.id = 'settingsMaxRAMInput'
     maxRAMInput.type = 'number'
     maxRAMInput.min = settingsMaxRAMRange.getAttribute('min')
-    maxRAMInput.max = Math.min(settingsMaxRAMRange.getAttribute('max'), availableRAM)
+    maxRAMInput.max = Math.min(settingsMaxRAMRange.getAttribute('max'), totalRAM)
     maxRAMInput.step = '0.1'
     maxRAMInput.value = parseFloat(maxRAMText)
     maxRAMInput.style.width = '60px'
@@ -1235,7 +1235,7 @@ function createRAMInputFields() {
     minRAMInput.id = 'settingsMinRAMInput'
     minRAMInput.type = 'number'
     minRAMInput.min = settingsMinRAMRange.getAttribute('min')
-    minRAMInput.max = Math.min(settingsMinRAMRange.getAttribute('max'), availableRAM)
+    minRAMInput.max = Math.min(settingsMinRAMRange.getAttribute('max'), totalRAM)
     minRAMInput.step = '0.1'
     minRAMInput.value = parseFloat(minRAMText)
     minRAMInput.style.width = '60px'
@@ -1250,9 +1250,9 @@ function createRAMInputFields() {
         const value = parseFloat(e.target.value)
         if (isNaN(value)) return
 
-        // Ensure value doesn't exceed available RAM
-        const availableRAM = Number(os.freemem() / 1073741824)
-        const cappedValue = Math.min(value, availableRAM)
+        // Ensure value doesn't exceed total RAM
+        const totalRAM = Number(os.totalmem() / 1073741824)
+        const cappedValue = Math.min(value, totalRAM)
         e.target.value = cappedValue.toFixed(1)
 
         const sliderMeta = calculateRangeSliderMeta(settingsMaxRAMRange)
@@ -1264,9 +1264,9 @@ function createRAMInputFields() {
         const value = parseFloat(e.target.value)
         if (isNaN(value)) return
 
-        // Ensure value doesn't exceed available RAM
-        const availableRAM = Number(os.freemem() / 1073741824)
-        const cappedValue = Math.min(value, availableRAM)
+        // Ensure value doesn't exceed total RAM
+        const totalRAM = Number(os.totalmem() / 1073741824)
+        const cappedValue = Math.min(value, totalRAM)
         e.target.value = cappedValue.toFixed(1)
 
         const sliderMeta = calculateRangeSliderMeta(settingsMinRAMRange)
@@ -1433,11 +1433,11 @@ settingsMinRAMRange.onchange = e => {
     const sMaxV = Number(settingsMaxRAMRange.getAttribute('value'))
     const sMinV = Number(settingsMinRAMRange.getAttribute('value'))
 
-    // Get available RAM
-    const availableRAM = Number(os.freemem() / 1073741824)
+    // Get total RAM
+    const totalRAM = Number(os.totalmem() / 1073741824)
 
-    // Cap the value to available RAM
-    const cappedValue = Math.min(sMinV, availableRAM)
+    // Cap the value to total RAM
+    const cappedValue = Math.min(sMinV, totalRAM)
 
     // If value was capped, update the slider
     if (cappedValue !== sMinV) {
@@ -1486,11 +1486,11 @@ settingsMaxRAMRange.onchange = e => {
     const sMaxV = Number(settingsMaxRAMRange.getAttribute('value'))
     const sMinV = Number(settingsMinRAMRange.getAttribute('value'))
 
-    // Get available RAM
-    const availableRAM = Number(os.freemem() / 1073741824)
+    // Get total RAM
+    const totalRAM = Number(os.totalmem() / 1073741824)
 
-    // Cap the value to available RAM
-    const cappedValue = Math.min(sMaxV, availableRAM)
+    // Cap the value to total RAM
+    const cappedValue = Math.min(sMaxV, totalRAM)
 
     // If value was capped, update the slider
     if (cappedValue !== sMaxV) {
@@ -1569,8 +1569,9 @@ function bindMinMaxRam(server) {
     const SETTINGS_MAX_MEMORY = ConfigManager.getAbsoluteMaxRAM(server.rawServer.javaOptions?.ram)
     const SETTINGS_MIN_MEMORY = ConfigManager.getAbsoluteMinRAM(server.rawServer.javaOptions?.ram)
 
-    // Use the configured maximum memory (which is already calculated from total RAM)
-    const cappedMaxMemory = SETTINGS_MAX_MEMORY
+    // Use the total system RAM as the maximum value instead of the calculated limit
+    const totalRAM = Number(os.totalmem() / 1073741824)
+    const cappedMaxMemory = Math.floor(totalRAM)
 
     // Set the max and min values for the ranged sliders.
     settingsMaxRAMRange.setAttribute('max', cappedMaxMemory)
