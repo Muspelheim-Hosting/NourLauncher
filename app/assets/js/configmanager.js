@@ -71,16 +71,15 @@ exports.getAbsoluteMinRAM = function (ram) {
     if (ram?.minimum != null) {
         return ram.minimum / 1024
     } else {
-        // Legacy behavior
-        const mem = os.totalmem()
-        return mem >= 6 * 1073741824 ? 3 : 2
+        // Allow users to set minimum RAM as low as 1GB
+        return 1
     }
 }
 
 exports.getAbsoluteMaxRAM = function (ram) {
     const mem = os.totalmem()
-    const gT16 = mem - 16 * 1073741824
-    return Math.floor((mem - (gT16 > 0 ? Number.parseInt(gT16 / 8) + (16 * 1073741824) / 4 : mem / 4)) / 1073741824)
+    // Return the total system RAM instead of calculating a "safe" limit
+    return Math.floor(mem / 1073741824)
 }
 
 function resolveSelectedRAM(ram) {
