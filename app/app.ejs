@@ -29,6 +29,20 @@
             #main[overlay] {
                 filter: blur(3px) contrast(0.9) brightness(1.0);
             }
+            /* Intro animated logo styles */
+            #introLogoContainer {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 450;
+                display: none;
+                pointer-events: none;
+            }
+            #introLogo {
+                width: 600px;
+                height: auto;
+            }
         </style>
         <style title="ThemeOverrides"></style>
     </head>
@@ -45,6 +59,10 @@
                     <img id="loadSpinnerImage" class="rotating" src="assets/images/nour_cute_blinky.png" />
                 </div>
             </div>
+        </div>
+        <!-- Intro animated logo container -->
+        <div id="introLogoContainer">
+            <img id="introLogo" src="assets/videos/nour-logo-animated.gif" />
         </div>
     </body>
 </html>

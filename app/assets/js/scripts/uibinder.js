@@ -74,6 +74,23 @@ function getCurrentView() {
     return currentView
 }
 
+/**
+ * Play the intro animated logo after the launcher is loaded.
+ * The logo fades in, stays visible for a few seconds and then fades out.
+ */
+function playIntroLogo() {
+    const introContainer = $('#introLogoContainer')
+    if (introContainer.length === 0) return
+
+    const displayDuration = 3000 // milliseconds the logo stays visible
+
+    introContainer.fadeIn(200, () => {
+        setTimeout(() => {
+            introContainer.fadeOut(500)
+        }, displayDuration)
+    })
+}
+
 async function showMainUI(data) {
     loggerAutoUpdater.info('Initializing..')
     ipcRenderer.send('autoUpdateAction', 'initAutoUpdater', ConfigManager.getAllowPrerelease())
@@ -113,6 +130,8 @@ async function showMainUI(data) {
         setTimeout(() => {
             $('#loadingContainer').fadeOut(500, () => {
                 $('#loadSpinnerImage').removeClass('rotating')
+                // Play the intro logo once the spinner has disappeared.
+                playIntroLogo()
             })
         }, 250)
     }, 750)
